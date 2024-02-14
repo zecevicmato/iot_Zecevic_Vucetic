@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart House Environment Monitoring</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: linear-gradient(to right, #3494E6, #EC6EAD);
+            align-items: center;
+            justify-content: center;
+            color: #000000;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            margin-top: 10px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 70%;
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #333;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Smart House Environment Monitoring</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Temperature</th>
+                <th>Humidity</th>
+                <th>Light Intensity</th>
+            </tr>
+        </thead>
+        <tbody id="sensorDataBody">
+            <!-- Table body will be dynamically populated with MQTT data -->
+        </tbody>
+    </table>
+
+    <script src="https://cdn.jsdelivr.net/npm/mqtt/dist/mqtt.min.js"></script>
+    <script>
+        // Connect to the MQTT broker
+        var client = mqtt.connect('ws://mqtt.eclipse.org:80/ws');
+
+        // Subscribe to the topic
+        client.subscribe('smart-house/environment');
+
+        // Update the table with incoming MQTT data
+        client.on('message', function (topic, message) {
+            var data = JSON.parse(message);
+            var tableBody = document.getElementById('sensorDataBody');
+
+            // Create a new row for the table
+            var newRow = document.createElement('tr');
+
+            // Populate the row with data
+            newRow.innerHTML = `
+                <td>${data.date}</td>
+                <td>${data.time}</td>
+                <td>${data.temperature}</td>
+                <td>${data.humidity}</td>
+                <td>${data.light_intensity}</td>
+            `;
+
+            // Append the new row to the table
+            tableBody.appendChild(newRow);
+        });
+    </script>
+</body>
+</html>
